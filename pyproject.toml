@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "smtpwned"
+version = "0.1.0"
+description = "SMTP security and email testing toolkit"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+]
+
+[project.scripts]
+smtpwned = "smtpwned.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["smtpwned"]
