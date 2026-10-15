@@ -7,18 +7,15 @@ def connect_smtp(host,port):
     except Exception as error:
         print(f'Connection failed: {error}')
 
-server = connect_smtp('127.0.0.1',1025)
-
 def send_message(server,msg):
     server.send_message(msg)
 
-msg = create_message(
-    'name <send@mail>',
-    'receptient@mail',
-    'theme',
-    'body'
-)
 
+
+
+#ONLY FOR TEST
+
+'''
 if server is not None:
     print('Connected')
     try:
@@ -31,7 +28,7 @@ if server is not None:
     
 else:
     print('Not connected')
-
+'''
 
 
 

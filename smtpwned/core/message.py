@@ -11,6 +11,12 @@ def create_message (sender, to, subject, body, html=None):
     
     return msg
 
+
+
+
+#ONLY FOR TEST
+
+'''
 msg = create_message(
     'send@mail',
     'receptient@mail',
@@ -19,5 +25,5 @@ msg = create_message(
     '<button>Test button</button>'
 )
 
-
 print(msg)
+'''
