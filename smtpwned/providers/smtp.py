@@ -24,6 +24,30 @@ def connect_smtp_ssl(host,port):
     except Exception as error:
         print(f"Error: {error}")
 
+def connect (host, port, security="starttls"):
+    if security == "ssl":
+        try:
+            server = connect_smtp_ssl(host,port)
+            return server
+        except Exception as error:
+            print(f'SSL Error: {error}')
+            raise
+    
+    elif security == "starttls":
+        server = connect_smtp(host,port)
+        if server is not None:
+            try:
+                enable_tls(server)
+            except Exception as error:
+                raise
+        return server
+    
+    elif security == "none":
+        server = connect_smtp(host,port)
+        return server
+    else:
+        raise ValueError("Connect method not found, please try again")
+
 
 #ONLY FOR TEST
 
