@@ -1,72 +1,109 @@
 import smtplib
 from smtpwned.core.message import create_message
 
-def connect_smtp(host,port):
+def connect_smtp(host, port):
     try:
-        return smtplib.SMTP(host,port,timeout=10)
+        return smtplib.SMTP(host, port, timeout=10)
     except Exception as error:
         print(f'Connection failed: {error}')
+        return None
 
-def send_message(server,msg):
+def send_message(server, msg):
     server.send_message(msg)
 
 def enable_tls(server):
-    server.ehlo()
     server.starttls()
-    server.ehlo()
 
-def login_smtp(server,username,password):
-    server.login(username,password)
+def login_smtp(server, username, password):
+    server.login(username, password)
 
-def connect_smtp_ssl(host,port):
+def connect_smtp_ssl(host, port):
     try:
-        return smtplib.SMTP_SSL(host,port,timeout=10)
+        return smtplib.SMTP_SSL(host, port, timeout=10)
     except Exception as error:
         print(f"Error: {error}")
+        return None
 
-def connect (host, port, security="starttls"):
+def connect(host, port, security="starttls"):
     if security == "ssl":
-        try:
-            server = connect_smtp_ssl(host,port)
-            return server
-        except Exception as error:
-            print(f'SSL Error: {error}')
-            raise
+        server = connect_smtp_ssl(host, port)
+        if server is None:
+            raise RuntimeError(f'SSL Error: Failed to connect to {host}:{port}')
+        return server
     
     elif security == "starttls":
-        server = connect_smtp(host,port)
+        server = connect_smtp(host, port)
         if server is not None:
             try:
                 enable_tls(server)
             except Exception as error:
-                raise
+                try:
+                    server.close()
+                except Exception:
+                    pass
+                raise error
         return server
     
     elif security == "none":
-        server = connect_smtp(host,port)
+        server = connect_smtp(host, port)
         return server
     else:
         raise ValueError("Connect method not found, please try again")
 
-
-#ONLY FOR TEST
-
-'''
-server = connect_smtp('127.0.0.1',1025)
-
-if server is not None:
-    print('Connected')
+def check_connection(server):
+    if server is None or isinstance(server, bool):
+        return False
     try:
-        send_message(server,msg)
-        print('Message sent')
+        response = server.noop()[0]
+        if response == 250:
+            return True
+        else:
+            return False
     except Exception as error:
-        print(f'Error: {error}')
-    finally:
+        print(f'Connection check failed: {error}')
+        return False
+
+def check_authentication(server, username, password):
+    if server is None or isinstance(server, bool):
+        return False
+    try:
+        login_smtp(server, username, password)
+        print(f'Login successful for user: {username}')
+        return True
+    except Exception as error:
+        print(f'Login failed: {error}')
+        return False
+
+def check_smtp_ready(server, username, password):
+    if not check_connection(server):
+        return False
+
+    return check_authentication(server, username, password)
+
+def disconnect(server):
+    try:
         server.quit()
-    
-else:
-    print('Not connected')
-'''
+        return True
+    except Exception as error:
+        print(f'Disconnection failed: {error}')
+        return False
 
+def close_connection(server):
+    if server is not None and not isinstance(server, bool):
+        return disconnect(server)
+    else:
+        print("Server is None, cannot close connection.")
+        return False
 
-
+def server_sendmail(server, sender, to, subject, body, html=None):
+    if server is None or isinstance(server, bool):
+        print("Error sending email: Invalid server connection")
+        return False
+    try:
+        msg = create_message(sender, to, subject, body, html)
+        send_message(server, msg)
+        print(f"Email sent successfully to {to}")
+        return True
+    except Exception as error:
+        print(f"Error sending email: {error}")
+        return False
