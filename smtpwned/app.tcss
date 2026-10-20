@@ -1,0 +1,19 @@
+Screen {
+    padding: 1 2;
+}
+
+#send_btn {
+    margin: 1 1 1 1;
+    width: 100%;
+    
+}
+
+Header {
+    margin-bottom: 1;
+}
+
+#title_text {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1;
+}
