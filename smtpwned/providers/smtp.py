@@ -1,5 +1,6 @@
 import smtplib
 from smtpwned.core.message import create_message
+from smtpwned.providers import BaseProvider
 
 def connect_smtp(host, port):
     try:
@@ -9,7 +10,7 @@ def connect_smtp(host, port):
         return None
 
 def send_message(server, msg):
-    server.send_message(msg)
+    return server.send_message(msg)
 
 def enable_tls(server):
     server.starttls()
@@ -101,9 +102,53 @@ def server_sendmail(server, sender, to, subject, body, html=None):
         return False
     try:
         msg = create_message(sender, to, subject, body, html)
-        send_message(server, msg)
+        result = send_message(server, msg)
+        if result:
+            print(f"Error sending email: {result}")
+            return False
         print(f"Email sent successfully to {to}")
         return True
     except Exception as error:
         print(f"Error sending email: {error}")
         return False
+
+def send_email_single_shot(host, port, username, password, sender, to, subject, body, html=None, security="starttls"):
+    connection = None
+    try:
+        connection = connect(host, port, security)
+
+        if connection is None:
+            print("Error: Failed to establish connection.")
+            return False
+
+        check_ready = check_smtp_ready(connection, username, password)
+
+        if not check_ready:
+            return False
+        
+        return server_sendmail(connection, sender, to, subject, body, html)
+
+    finally:
+        if connection is not None:
+            close_connection(connection)
+
+class SMTPProvider(BaseProvider):
+    def __init__(self, host, port, username, password, security="starttls"):
+        self.host = host
+        self.port = port
+        self.username = username
+        self.password = password
+        self.security = security
+
+    def send_email(self, sender, to, subject, body, html=None, security="starttls"):
+        return send_email_single_shot(
+            self.host,
+            self.port,
+            self.username,
+            self.password,
+            sender,
+            to, 
+            subject,
+            body,
+            html,
+            security)
