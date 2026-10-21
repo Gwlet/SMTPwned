@@ -44,7 +44,7 @@ class SMTPwnedApp(App):
                     
                 yield Static('Status: Disconnected', id='smtp_status')
 
-            with TabPane('Resend Sender', id='Resend_tab'):
+            with TabPane('Resend API Sender', id='Resend_tab'):
                     
                     yield Input(placeholder='Enter Resend API key', id='resend_api')
                     yield Input(placeholder='Enter Sender Mail and Name(e.g. example <example@domen.com>)', id='resend_mail')
@@ -56,6 +56,32 @@ class SMTPwnedApp(App):
                         yield Button("Send Email", variant='success', id='resend_btn')
                         
                     yield Static('Status: Disconnected', id='resend_status')
+
+            with TabPane('DNS/MX Checker', id='dns_tab'):
+                yield Input(placeholder='Enter domain name(e.g. example.com):', id='dns_domain')
+                yield Button("Check DNS", variant='success', id='dns_btn')
+                yield Static('Status: Disconnected', id='dns_status')
+
+            with TabPane('DMARC Checker', id='dmarc_tab'):
+                yield Input(placeholder='Enter domain name(e.g. example.com):', id='dmarc_domain')
+                yield Button("Check DMARC", variant='success', id='dmarc_btn')
+                yield Static('Status: Disconnected', id='dmarc_status')
+            
+            with TabPane('SPF Checker', id='spf_tab'):
+                yield Input(placeholder='Enter domain name(e.g. example.com):', id='spf_domain')
+                yield Button("Check SPF", variant='success', id='spf_btn')
+                yield Static('Status: Disconnected', id='spf_status')
+
+            with TabPane('Settings', id='settings_tab'):
+                yield Button('Github repository', variant='primary', id='github_btn')
+                yield Button('License', variant='primary', id='license_btn')
+                yield Button('About', variant='primary', id='about_btn')
+                yield Select(
+                    options=[
+                        ('Language: English', 'en'),
+                        ('Language: Spanish', 'es'),
+                        ('Language: Russian', 'ru'),
+                    ], value='en', prompt='Select Language', id='language_select')
 
             with TabPane("Exit", id="exit_tab"):
                 pass

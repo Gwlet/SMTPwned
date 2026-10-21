@@ -13,20 +13,34 @@ Header {
 }
 
 #resend_button_container {
-    height: auto;
-    margin-top: 1;
+    height: 5;
 }
 
 #smtp_button_container {
-    height: auto;
-    margin-top: 1;
+    height: 5;
 }
 
 
-#resend_button_container Button {
+# #resend_button_container Button {
+#     width: 100%;
+# }
+
+# #smtp_button_container Button {
+#     width: 100%;
+# }
+
+#github_btn {
+    color: white;
+    background: #24292e;
+    border-title-color: #24292e;
+}
+
+Button {
     width: 100%;
+    margin-top: 1;
+    margin-bottom: 1;
 }
 
-#smtp_button_container Button {
+Input {
     width: 100%;
 }
