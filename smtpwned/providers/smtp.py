@@ -13,7 +13,9 @@ def send_message(server, msg):
     return server.send_message(msg)
 
 def enable_tls(server):
+    server.ehlo()
     server.starttls()
+    server.ehlo()
 
 def login_smtp(server, username, password):
     server.login(username, password)
@@ -25,7 +27,7 @@ def connect_smtp_ssl(host, port):
         print(f"Error: {error}")
         return None
 
-def connect(host, port, security="starttls"):
+def connect(host, port, security="none"):
     if security == "ssl":
         server = connect_smtp_ssl(host, port)
         if server is None:
@@ -75,12 +77,14 @@ def check_authentication(server, username, password):
         print(f'Login failed: {error}')
         return False
 
-def check_smtp_ready(server, username, password):
+def check_smtp_ready(server, username=None, password=None):
     if not check_connection(server):
         return False
 
-    return check_authentication(server, username, password)
+    if username and password:
+        return check_authentication(server, username, password)
 
+    return True
 def disconnect(server):
     try:
         server.quit()
@@ -132,7 +136,31 @@ def send_email_single_shot(host, port, username, password, sender, to, subject, 
         if connection is not None:
             close_connection(connection)
 
+# class SMTPProvider(BaseProvider):
+#     def __init__(self, host, port, username, password, security="starttls"):
+#         self.host = host
+#         self.port = port
+#         self.username = username
+#         self.password = password
+#         self.security = security
+
+#     def send_email(self, sender, to, subject, body, html=None, security="none"):
+#         sec = security or getattr(self, 'security', 'none')
+
+#         return send_email_single_shot(
+#             self.host,
+#             self.port,
+#             self.username,
+#             self.password,
+#             sender,
+#             to, 
+#             subject,
+#             body,
+#             html,
+#             security)
+
 class SMTPProvider(BaseProvider):
+
     def __init__(self, host, port, username, password, security="starttls"):
         self.host = host
         self.port = port
@@ -140,15 +168,20 @@ class SMTPProvider(BaseProvider):
         self.password = password
         self.security = security
 
-    def send_email(self, sender, to, subject, body, html=None, security="starttls"):
+    def send_email(
+        self, sender, to, subject, body, html=None, security=None
+    ):
+        sec = security or getattr(self, "security", "none")
+
         return send_email_single_shot(
             self.host,
             self.port,
             self.username,
             self.password,
             sender,
-            to, 
+            to,
             subject,
             body,
             html,
-            security)
+            sec,
+        )
