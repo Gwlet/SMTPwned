@@ -39,7 +39,7 @@ cd SMTPwned
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 python -m pip install --upgrade pip
-python -m pip install -e .
+pip install -r requirements.txt
 ```
 
 ### Run the app
