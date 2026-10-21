@@ -29,17 +29,6 @@ Email systems are notoriously difficult to debug. Small configuration mistakes c
 - Lightweight terminal-style interface built with Textual
 - Python-first project structure for easy extension
 
-## Screenshots
-
-The project ships with a Textual-based interface for interactive testing.
-
-- SMTP Sender tab
-- Resend API Sender tab
-- DNS/MX Checker tab
-- DMARC Checker tab
-- SPF Checker tab
-- Settings and exit controls
-
 ## Installation
 
 ### From source
